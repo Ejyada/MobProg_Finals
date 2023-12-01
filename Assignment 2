@@ -1,0 +1,102 @@
+//Mobile Programming - Assignment 2
+import 'package:flutter/material.dart';
+
+void main(){
+  runApp(MainPage());
+}
+
+class MainPage extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: FirstPage()
+    );
+  }
+}
+
+
+class FirstPage extends StatelessWidget{
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+ 
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("First Page"),
+        backgroundColor: Colors.blue,
+        leading: Icon(Icons.code)
+      ),
+      body: Form(
+        child: ListView(
+          padding: EdgeInsets.all(20),
+          children: [
+            TextFormField(
+              controller: emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                labelText: "Email Address"
+              )
+            ),
+            TextFormField(
+              obscureText: true,
+              controller: passwordController,
+              keyboardType: TextInputType.visiblePassword,
+              decoration: InputDecoration(
+                labelText: "Password"
+              )
+            ),
+            ElevatedButton(
+              onPressed: (){
+                String email = emailController.text;
+                String password = passwordController.text;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SecondPage(
+                      emailController: email,
+                      passwordController : password)
+                  )
+                );
+              },
+              child: Text("Login")
+            )
+          ]
+        )
+      )
+    );
+  }
+}
+
+
+class SecondPage extends StatelessWidget{
+  final String? emailController;
+  final String? passwordController;
+  
+  SecondPage({ this.emailController, this.passwordController });
+  
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Second Page"),
+        backgroundColor: Colors.green,
+      ),
+      body: ListView(
+        padding: EdgeInsets.all(20),
+        children: [
+          Text(
+            "Email: " + (emailController ?? ""),
+            textAlign: TextAlign.center //To put the text in center
+          ),
+          Text(
+                "Password: " + (passwordController ?? ""),
+                textAlign: TextAlign.center //To put the text in center
+              ),
+          
+          
+          ]
+        )
+    );
+  }
+}
