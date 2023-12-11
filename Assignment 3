@@ -1,0 +1,116 @@
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+const Color darkBlue = Color.fromARGB(255, 18, 32, 47);
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        theme: ThemeData.dark(
+          useMaterial3: false,
+        ).copyWith(
+          scaffoldBackgroundColor: darkBlue,
+        ),
+        debugShowCheckedModeBanner: false,
+        home: Home());
+  }
+}
+
+class Home extends StatefulWidget {
+  @override
+  State<Home> createState() => HomeState();
+}
+
+class HomeState extends State<Home> {
+  List<dynamic> posts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getPosts();
+  }
+
+  getPosts() async {
+    setState(() {});
+
+    var url = Uri.parse("https://jsonplaceholder.typicode.com/photos");
+
+    var response = await http.get(url);
+
+    setState(() {
+      posts = json.decode(response.body);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Sample pictures"),
+        backgroundColor: Colors.green,
+      ),
+      body: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3, // The number of columns
+          crossAxisSpacing: 8.0,
+          mainAxisSpacing: 8.0,
+        ),
+        itemCount: posts.length > 30 ? 30 : posts.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PicturePage(
+                    imageUrl: posts[index]['url'],
+                  ),
+                ),
+              );
+            },
+            child: Card(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Image.network(
+                      posts[index]['url'],
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class PicturePage extends StatelessWidget {
+  final String imageUrl;
+
+  const PicturePage({required this.imageUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Photo Detail"),
+        backgroundColor: Colors.green,
+      ),
+      body: Center(
+        child: Image.network(
+          imageUrl,
+          fit: BoxFit.contain,
+        ),
+      ),
+    );
+  }
+}
